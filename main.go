@@ -2,56 +2,32 @@ package main
 
 import (
 	"fmt"
+	"goplayground/node"
 	"os"
-	"path/filepath"
-	"regexp"
+	"strings"
 )
 
-type File struct {
-	relPath   string
-	name      string
-	extension string
-}
-
-// struct file ~ model db
 func main() {
 	vault := os.Getenv("OBSIDIAN_VAULT")
-	// files, err := os.ReadDir(vault)
-	queue := make([]string, 0)
-	queue = append(queue, vault)
-	ignorePath, err := regexp.Compile(`(?:^.*imdone-tasks.*$)|(?:^\.)`)
-	if err != nil {
-		panic(err)
-	}
-	ignoreLink, err := regexp.Compile(`(?:^/400\sArchives.*$)|(?:^.*@Novall.*$)`)
-	if err != nil {
-		panic(err)
+	root := node.New("/", nil)
+	previous := root
+	for _, p := range strings.Split(vault, "/") {
+		if len(p) > 0 {
+			node := node.New(p, previous)
+			previous = node
+		}
 	}
 
-	result := make([]File, 0)
+	queue := []*node.Node{root}
+	root.Insert(node.New("test", root))
 	for len(queue) > 0 {
-		path := queue[0]
+		current := queue[0]
 		queue = queue[1:]
-		files, err := os.ReadDir(path)
-		if err != nil {
-			panic(err)
-		}
-		for _, file := range files {
-			relPath := path[len(vault):]
-			filePath := filepath.Join(path, file.Name())
-			if ignorePath.MatchString(file.Name()) || ignoreLink.MatchString(relPath) {
-				continue
-			} else if file.IsDir() {
-				queue = append(queue, filePath)
-			} else if filepath.Ext(file.Name()) == ".md" {
-				extension := filepath.Ext(file.Name())
-				f := File{relPath, file.Name()[:len(file.Name())-len(extension)], filepath.Ext(file.Name())}
-				result = append(result, f)
-				// fmt.Printf("path=%s\nfile=%s\nextension=%s\n\n", f.relPath, f.name, f.extension)
+		for _, node := range current.Children {
+			fmt.Printf("%v+\n", current)
+			if len(node.Children) > 0 {
+				queue = append(queue, node)
 			}
 		}
-	}
-	for _, value := range result {
-		fmt.Printf("%#v\n", value)
 	}
 }
