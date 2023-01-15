@@ -1,7 +1,8 @@
 /pkg
-.idea
-.func.sh
-.tmuxp.yaml
-.envrc
 /bin
 /data
+/examples
+.idea
+.envrc
+.func.sh
+.tmuxp.yaml
