@@ -18,3 +18,12 @@ windows:
     layout: even-horizontal
     panes:
       - pane
+
+  - window_name: rqlite
+    start_directory: .
+    layout: even-horizontal
+    panes:
+      - shell_command:
+        - rqlited -node-id 1 "$WORKSPACE"/data/node.1
+      - shell_command:
+        - rqlite -H localhost -p 4001
