@@ -1,6 +1,10 @@
 package node
 
-import "strings"
+import (
+	"fmt"
+	"os"
+	"strings"
+)
 
 type Node struct {
 	Name     string
@@ -32,4 +36,29 @@ func (n *Node) Update(path string) {
 		}
 	}
 
+}
+
+func main() {
+	vault := os.Getenv("OBSIDIAN_VAULT")
+	root := New("/", nil)
+	previous := root
+	for _, p := range strings.Split(vault, "/") {
+		if len(p) > 0 {
+			node := New(p, previous)
+			previous = node
+		}
+	}
+
+	queue := []*Node{root}
+	root.Insert(New("test", root))
+	for len(queue) > 0 {
+		current := queue[0]
+		queue = queue[1:]
+		for _, node := range current.Children {
+			fmt.Printf("%v+\n", current)
+			if len(node.Children) > 0 {
+				queue = append(queue, node)
+			}
+		}
+	}
 }
