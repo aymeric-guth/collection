@@ -1,6 +1,7 @@
 package node
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -32,13 +33,33 @@ func (n *Node) Append(name string) {
 	n.Children = append(n.Children, New(name, n))
 }
 
-func (n *Node) Update(path string) {
-	previous := n
-	for _, p := range strings.Split(path, "/") {
-		if len(p) > 0 {
-			node := New(p, previous)
-			previous = node
+func (n *Node) Root() *Node {
+	for {
+		if n.Parent == nil {
+			return n
+		} else {
+			n = n.Parent
 		}
+	}
+}
+
+func (n *Node) Update(path string) {
+	q := strings.Split(path, "/")
+	for len(q) > 0 {
+		cur := q[0]
+		q = q[1:]
+		if cur == "" {
+			continue
+		}
+		for _, node := range n.Children {
+			if node.Name == cur {
+				n = node
+				goto next
+			}
+		}
+		n = New(cur, n)
+	next:
+		continue
 	}
 }
 
@@ -47,11 +68,12 @@ func (n *Node) Walk() *Node {
 	for len(q) > 0 {
 		current := q[0]
 		q = q[1:]
+		fmt.Printf("%+v\n", current)
 		for _, node := range current.Children {
 			if len(node.Children) > 0 {
 				q = append(q, node)
 			} else {
-				return node
+				fmt.Printf("leaf: %+v\n", node)
 			}
 		}
 	}

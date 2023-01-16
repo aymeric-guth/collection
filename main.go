@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"node/node"
 	"os"
 	"strings"
@@ -22,8 +21,10 @@ func main() {
 		}
 	}
 
-	leaf := root.Walk()
-	if leaf != nil {
-		fmt.Println(leaf)
-	}
+	root.Update(vault + "/test/test.md")
+	root.Update(vault + "/lawl/laul.md")
+	root.Walk()
+	// if leaf != nil {
+	// 	fmt.Println(leaf)
+	// }
 }
