@@ -8,6 +8,7 @@ type IQueue[T any] interface {
 	Push(Queue[T])
 	Pop() Queue[T]
 	Peek() Queue[T]
+	Size() int
 }
 
 func New[T any]() *Queue[T] {
@@ -18,18 +19,16 @@ func (q *Queue[T]) Push(v T) {
 	q.q = append(q.q, v)
 }
 
-func (q *Queue[T]) Pop() *T {
-	if len(q.q) > 0 {
-		v := q.q[0]
-		q.q = q.q[1:]
-		return &v
-	}
-	return nil
+func (q *Queue[T]) Pop() T {
+	v := q.q[0]
+	q.q = q.q[1:]
+	return v
 }
 
-func (q *Queue[T]) Peek() *T {
-	if len(q.q) > 0 {
-		return &q.q[0]
-	}
-	return nil
+func (q *Queue[T]) Peek() T {
+	return q.q[0]
+}
+
+func (q *Queue[T]) Size() int {
+	return len(q.q)
 }
