@@ -6,16 +6,17 @@ import (
 )
 
 type INode interface {
-	Append(name string)
 	Update(path string)
-	Merge(node *Node) *Node
-	Walk() *Node
+	DFS()
+	BFS()
+	Search(string) bool
 }
 
 type Node struct {
 	Name     string
 	Parent   *Node
 	Children []*Node
+	Distance int
 }
 
 func New(name string, parent *Node) *Node {
@@ -26,11 +27,16 @@ func New(name string, parent *Node) *Node {
 	if parent != nil {
 		parent.Children = append(parent.Children, node)
 	}
+	n := node
+	for n.Parent != nil {
+		n = n.Parent
+		node.Distance++
+	}
 	return node
 }
 
-func (n *Node) Append(name string) {
-	n.Children = append(n.Children, New(name, n))
+func NewTree() *Node {
+	return New("/", nil)
 }
 
 func (n *Node) Root() *Node {
@@ -63,23 +69,45 @@ func (n *Node) Update(path string) {
 	}
 }
 
-func (n *Node) Walk() *Node {
+func (n *Node) Search(path string) bool {
+	q := strings.Split(path, "/")
+	for len(q) > 0 {
+		cur := q[0]
+		q = q[1:]
+		if cur == "" {
+			continue
+		}
+		for _, node := range n.Children {
+			if node.Name == cur {
+				n = node
+				goto next
+			}
+		}
+		return false
+	next:
+		continue
+	}
+	return true
+}
+
+func (n *Node) DFS() {
+	q := []*Node{n}
+	for len(q) > 0 {
+		current := q[len(q)-1]
+		q = q[:len(q)-1]
+		padding := strings.Repeat(" ", current.Distance*4)
+		fmt.Printf("%s%s\n", padding, current.Name)
+		q = append(q, current.Children...)
+	}
+}
+
+func (n *Node) BFS() {
 	q := []*Node{n}
 	for len(q) > 0 {
 		current := q[0]
 		q = q[1:]
-		fmt.Printf("%+v\n", current)
-		for _, node := range current.Children {
-			if len(node.Children) > 0 {
-				q = append(q, node)
-			} else {
-				fmt.Printf("leaf: %+v\n", node)
-			}
-		}
+		padding := strings.Repeat(" ", current.Distance)
+		fmt.Printf("%s%s\n", padding, current.Name)
+		q = append(q, current.Children...)
 	}
-	return nil
-}
-
-func (n *Node) Merge(node *Node) *Node {
-	return nil
 }
