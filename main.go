@@ -1,9 +1,9 @@
 package main
 
 import (
+	"collection/node"
+	"collection/queue"
 	"fmt"
-	"node/node"
-	"node/queue"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -24,10 +24,10 @@ func regexWrapper(s string) *regexp.Regexp {
 }
 
 func fileFinder(vault string) []string {
-	q := queue.New[string]()
+	q := queue.New[string](vault)
 	// queue := make([]string, 0)
 	// queue = append(queue, vault)
-	q.Push(vault)
+	// q.Push(vault)
 	ignorePath := regexWrapper(`(?:^.*imdone-tasks.*$)|(?:^\.)`)
 	ignoreLink := regexWrapper(`(?:^/400\sArchives.*$)|(?:^.*@Novall.*$)`)
 	result := make([]string, 0)

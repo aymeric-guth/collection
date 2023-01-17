@@ -11,8 +11,8 @@ type IQueue[T any] interface {
 	Size() int
 }
 
-func New[T any]() *Queue[T] {
-	return &Queue[T]{q: make([]T, 0)}
+func New[T any](args ...T) *Queue[T] {
+	return &Queue[T]{q: args}
 }
 
 func (q *Queue[T]) Push(v T) {
