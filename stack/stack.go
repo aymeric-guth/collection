@@ -25,3 +25,7 @@ func (s *Stack[T]) Peek() T {
 func (s *Stack[T]) Size() int {
 	return len(s.d)
 }
+
+func (s *Stack[T]) Empty() {
+	panic("not implemented")
+}
